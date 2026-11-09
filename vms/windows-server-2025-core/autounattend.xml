@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Windows Server 2025 Standard Evaluation (Server Core) unattended install for the VMware Workstation VM
+  windows-server-2025-core. UEFI with Secure Boot, NVMe disk 0, GPT.
+  Setup finds this file at the root of the second CD (the answer ISO built by build-iso.sh).
+  The network (vmxnet3 needs VMware Tools first), OpenSSH and the firewall are set up by setup.ps1 at first logon.
+  The Administrator password is injected at build time; it is never kept in the repo.
+-->
+<unattend xmlns="urn:schemas-microsoft-com:unattend" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+
+  <settings pass="windowsPE">
+    <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+      <SetupUILanguage><UILanguage>en-US</UILanguage></SetupUILanguage>
+      <InputLocale>en-US</InputLocale>
+      <SystemLocale>en-US</SystemLocale>
+      <UILanguage>en-US</UILanguage>
+      <UserLocale>en-US</UserLocale>
+    </component>
+    <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+      <DiskConfiguration>
+        <Disk wcm:action="add">
+          <DiskID>0</DiskID>
+          <WillWipeDisk>true</WillWipeDisk>
+          <CreatePartitions>
+            <CreatePartition wcm:action="add"><Order>1</Order><Type>EFI</Type><Size>260</Size></CreatePartition>
+            <CreatePartition wcm:action="add"><Order>2</Order><Type>MSR</Type><Size>16</Size></CreatePartition>
+            <CreatePartition wcm:action="add"><Order>3</Order><Type>Primary</Type><Extend>true</Extend></CreatePartition>
+          </CreatePartitions>
+          <ModifyPartitions>
+            <ModifyPartition wcm:action="add"><Order>1</Order><PartitionID>1</PartitionID><Format>FAT32</Format><Label>System</Label></ModifyPartition>
+            <ModifyPartition wcm:action="add"><Order>2</Order><PartitionID>3</PartitionID><Format>NTFS</Format><Label>Windows</Label><Letter>C</Letter></ModifyPartition>
+          </ModifyPartitions>
+        </Disk>
+      </DiskConfiguration>
+      <ImageInstall>
+        <OSImage>
+          <InstallFrom>
+            <MetaData wcm:action="add">
+              <Key>/IMAGE/NAME</Key>
+              <Value>@@IMAGE_NAME@@</Value>
+            </MetaData>
+          </InstallFrom>
+          <InstallTo><DiskID>0</DiskID><PartitionID>3</PartitionID></InstallTo>
+        </OSImage>
+      </ImageInstall>
+      <UserData>
+        <AcceptEula>true</AcceptEula>
+        <FullName>Johan Socarras</FullName>
+        <Organization>VMware-Homelab</Organization>
+      </UserData>
+    </component>
+  </settings>
+
+  <settings pass="specialize">
+    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+      <!-- NetBIOS names stop at 15 characters, so the VM name doesn't fit -->
+      <ComputerName>win2025-core</ComputerName>
+      <TimeZone>UTC</TimeZone>
+    </component>
+    <component name="Microsoft-Windows-ServerManager-SvrMgrNc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+      <DoNotOpenServerManagerAtLogon>true</DoNotOpenServerManagerAtLogon>
+    </component>
+  </settings>
+
+  <settings pass="oobeSystem">
+    <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+      <InputLocale>en-US</InputLocale>
+      <SystemLocale>en-US</SystemLocale>
+      <UILanguage>en-US</UILanguage>
+      <UserLocale>en-US</UserLocale>
+    </component>
+    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+      <UserAccounts>
+        <AdministratorPassword>
+          <Value>@@ADMIN_PASSWORD@@</Value>
+          <PlainText>true</PlainText>
+        </AdministratorPassword>
+      </UserAccounts>
+      <!-- One automatic logon, only to run setup.ps1; it powers the VM off when it's done -->
+      <AutoLogon>
+        <Enabled>true</Enabled>
+        <LogonCount>1</LogonCount>
+        <Username>Administrator</Username>
+        <Password>
+          <Value>@@ADMIN_PASSWORD@@</Value>
+          <PlainText>true</PlainText>
+        </Password>
+      </AutoLogon>
+      <OOBE>
+        <HideEULAPage>true</HideEULAPage>
+        <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+        <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+        <ProtectYourPC>3</ProtectYourPC>
+      </OOBE>
+      <FirstLogonCommands>
+        <SynchronousCommand wcm:action="add">
+          <Order>1</Order>
+          <Description>Run setup.ps1 from the answer CD</Description>
+          <CommandLine>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "&amp; ((Get-PSDrive -PSProvider FileSystem | Where-Object { Test-Path (Join-Path $_.Root 'setup.ps1') } | Select-Object -First 1).Root + 'setup.ps1')"</CommandLine>
+        </SynchronousCommand>
+      </FirstLogonCommands>
+    </component>
+  </settings>
+</unattend>

@@ -1,0 +1,52 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: ShellCheck
+        run: pipx run --spec shellcheck-py==0.11.0.1 shellcheck scripts/*.sh vms/*/*.sh
+
+      - name: Ruff
+        run: pipx run --spec ruff==0.17.4 ruff check --no-cache scripts vms
+
+      - name: PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Scope CurrentUser -Force
+          $results = Invoke-ScriptAnalyzer -Path . -Recurse
+          $results | Format-Table RuleName, Severity, ScriptName, Line, Message -AutoSize -Wrap
+          if ($results) { exit 1 }
+
+      - name: Kickstart (Rocky Linux 10)
+        run: pipx run --spec pykickstart==3.78 ksvalidator -v RHEL10 vms/rocky-10-server/ks.cfg
+
+      - name: Windows answer file is well-formed XML
+        run: python3 -c 'import sys, xml.dom.minidom as m; m.parse(sys.argv[1])' vms/windows-server-2025-core/autounattend.xml
+
+      - name: No password hash or key committed
+        run: |
+          if grep -rnIE '\$(1|5|6|y|2[aby])\$|PRIVATE KEY|(ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp[0-9]+) AAAA' \
+              --exclude-dir=.git --exclude-dir=.github .; then
+            echo "::error::A password hash or key is committed"
+            exit 1
+          fi
+
+      - name: Example .vmx files carry no per-machine values
+        run: |
+          if grep -nE '^(uuid\.(bios|location)|ethernet[0-9]+\.generatedAddress|vm\.genid|vmci0\.id)' vms/*/*.vmx.example; then
+            echo "::error::A per-machine value is left in a .vmx.example"
+            exit 1
+          fi

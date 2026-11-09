@@ -1,0 +1,12 @@
+# Built or downloaded media and VM files never belong in the repository
+*.iso
+*.vmdk
+*.vmsn
+*.vmem
+*.nvram
+*.log
+*.lck/
+# Generated passwords and their hashes live outside the repository
+secrets/
+*.hash
+*.pass
