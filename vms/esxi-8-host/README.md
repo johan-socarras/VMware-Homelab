@@ -5,6 +5,8 @@ TrueNAS NFS share as its datastore and a test VM powered on from it. ESXi 8 take
 the whole 40 GB disk for its system partitions and leaves no local datastore, so
 every VM on this host lives on shared storage, as it would in a cluster.
 
+![Nested ESXi on shared storage: inside VMware Workstation, esxi-8-host mounts its only datastore over NFS 4.1 from truenas-25.10-storage across the isolated lab network, and runs a test VM from it](../../docs/img/nested-esxi-storage.png)
+
 | | |
 |---|---|
 | Guest OS | VMware ESXi 8.0 Update 3e, build 24677879, free edition ("VMware vSphere Hypervisor"); its API is read-only, so configuration is done with `esxcli` over SSH |

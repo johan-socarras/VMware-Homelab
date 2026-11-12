@@ -31,6 +31,8 @@ also the first VM on the isolated `lab` network, so it was used to prove that
    install; it takes about 4 minutes and the VM powers itself off.
 4. Detach the ISO and take the `baseline` snapshot powered off.
 
+## What it took
+
 **Interface names come from PCI slots.** The kickstart refers to `ens160` and
 `ens192`, which only holds if the `.vmx` pins the NICs to slots 160 and 192
 (`ethernetN.pciSlotNumber`); the example configuration does. On the first install
@@ -41,7 +43,7 @@ kickstart now removes them. Both fixes were confirmed with a fresh install into 
 throwaway VM created from the example `.vmx`: `ens160` and `ens192` came up with their
 addresses, and a scan from Kali found only `22/tcp` (Cockpit's `9090` filtered).
 
-## The `lab` network test
+## Tests
 
 With Debian and Rocky running, each one pinged the other's `lab` address
 (about 0.2 ms), and from Debian's `lab` interface neither `1.1.1.1` nor the home

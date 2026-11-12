@@ -1,6 +1,27 @@
-# VMware Homelab
+<h1 align="center">VMware Homelab</h1>
 
-[![Checks](https://github.com/johan-socarras/VMware-Homelab/actions/workflows/checks.yml/badge.svg)](https://github.com/johan-socarras/VMware-Homelab/actions/workflows/checks.yml)
+<p align="center">
+  A VMware Workstation homelab that rebuilds itself:<br>
+  nested ESXi 8 on TrueNAS NFS, five unattended installs and a Kali audit.
+</p>
+
+<p align="center">
+  <a href="https://github.com/johan-socarras/VMware-Homelab/actions/workflows/checks.yml"><img alt="Checks" src="https://github.com/johan-socarras/VMware-Homelab/actions/workflows/checks.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="Code license: MIT" src="https://img.shields.io/badge/code-MIT-blue"></a>
+  <a href="LICENSE-docs"><img alt="Docs license: CC BY 4.0" src="https://img.shields.io/badge/docs-CC%20BY%204.0-blue"></a>
+  <img alt="Runs on VMware Workstation 26" src="https://img.shields.io/badge/VMware%20Workstation-26-6d5dfc">
+  <img alt="Nested ESXi 8.0 U3e" src="https://img.shields.io/badge/ESXi-8.0%20U3e-2bb3ff">
+</p>
+
+<p align="center">
+  <a href="vms/README.md">Virtual machines</a> ·
+  <a href="docs/network.md">Network</a> ·
+  <a href="docs/unattended-installs.md">Unattended installs</a> ·
+  <a href="docs/security-audit.md">Security audit</a> ·
+  <a href="troubleshooting/README.md">Troubleshooting</a>
+</p>
+
+![The lab at a glance: four virtual networks and seven VMs grouped by power profile, with the nested ESXi host mounting its datastore from TrueNAS over NFS and Kali scanning the servers](docs/img/lab-overview.png)
 
 A virtualization lab on VMware Workstation: a nested ESXi host with shared NFS storage,
 Linux and Windows servers built from unattended installs, an isolated lab network, and a
@@ -22,8 +43,6 @@ its CD.
 - **Verification:** each VM documents how it was tested, and a port scan from Kali checks the
   hardening ([security audit](docs/security-audit.md)).
 
-![ESXi direct console after the unattended install](docs/img/esxi-dcui.png)
-
 **What I learned building it:**
 
 - When every boot medium fails the same way, the problem is the machine. A Windows VM
@@ -41,34 +60,6 @@ its CD.
 > **A snapshot, not a live map.** This repository documents how the lab was designed and
 > built. Passwords, keys and identifying details are left out, and the lab keeps changing
 > after publication, so versions and details here may no longer match what runs today.
-
-```mermaid
-flowchart LR
-    Host["Workstation host"]
-    subgraph mgmt["mgmt 10.10.1.0/24"]
-        ESXM["esxi-8-host<br/>Host Client"]
-    end
-    subgraph nat["nat 10.10.8.0/24 — internet"]
-        NAT["NAT gateway"]
-    end
-    subgraph lab["lab 10.10.10.0/24 — isolated"]
-        DEB["debian-13-server"]
-        ROCKY["rocky-10-server"]
-        WIN["windows-server-2025-core"]
-        KALI["kali-linux"]
-        TN["truenas-25.10-storage"]
-        ESXL["esxi-8-host vmk1"]
-    end
-    Host --- ESXM
-    Host --- NAT
-    ESXL -- "NFS 4.1 datastore" --> TN
-    KALI -. "nmap" .-> DEB
-    KALI -.-> ROCKY
-    KALI -.-> WIN
-```
-
-The servers also have a NIC on `nat` for updates and SSH from the host. Details, address
-plan and isolation tests: [docs/network.md](docs/network.md).
 
 ## Host
 
@@ -95,6 +86,9 @@ Every VM uses virtual hardware version 22. All but EVE-NG (imported as it was, s
 page) use UEFI, paravirtual NICs (vmxnet3), NVMe disks and no sound, USB or 3D, and have a
 `baseline` snapshot taken powered off right after their install and checks.
 
+The servers have a NIC on `nat` for updates and SSH from the host, and one on `lab`.
+Details, address plan and isolation tests: [docs/network.md](docs/network.md).
+
 ## Power profiles
 
 The host cannot run everything at once, so the VMs are grouped by what they are used for.
@@ -113,6 +107,32 @@ $ scripts/lab.sh stop servers
 $ scripts/lab.sh snapshot vsphere before-upgrade
 ```
 
+## Rebuild a VM
+
+Each VM is built from the vendor's ISO and the files in its folder. Debian, for example:
+
+```bash
+./vms/debian-13-server/build-iso.sh debian-13.7.0-amd64-netinst.iso \
+    ~/vmware/iso/debian-13-server-auto.iso /path/to/debian-13-server.hash ~/.ssh/id_ed25519.pub
+mkdir -p ~/vmware/debian-13-server
+cp vms/debian-13-server/debian-13-server.vmx.example ~/vmware/debian-13-server/debian-13-server.vmx
+# attach the ISO in that .vmx, then:
+vmware-vdiskmanager -c -s 20GB -a lsilogic -t 0 ~/vmware/debian-13-server/debian-13-server.vmdk
+vmrun start ~/vmware/debian-13-server/debian-13-server.vmx nogui
+# about 4 minutes later the VM is off: detach the ISO, boot, verify, snapshot
+```
+
+![The unattended install in four steps: build-iso.sh joins the vendor ISO, the answer file and the secrets; the VM installs itself and powers off; it is verified over SSH; and a baseline snapshot is taken](docs/img/unattended-install.png)
+
+The full method, and what each installer needed: [Unattended installs](docs/unattended-installs.md).
+The page of each VM has its own steps.
+
+## Screenshots
+
+![ESXi direct console after the unattended install](docs/img/esxi-dcui.png)
+
+The nested ESXi host after its kickstart install, at the address the kickstart gave it.
+
 ## Documentation
 
 | Document | Contents |
@@ -121,6 +141,7 @@ $ scripts/lab.sh snapshot vsphere before-upgrade
 | [Unattended installs](docs/unattended-installs.md) | The common pattern behind every build script, and what the installers taught me |
 | [Security audit](docs/security-audit.md) | Port scans from Kali, what they found and how it was closed |
 | [Naming](docs/naming.md) | How VMs, hosts and snapshots are named, and why |
+| [Troubleshooting](troubleshooting/README.md) | The five write-ups below, with symptom, cause and lesson side by side |
 | [TSH-01](troubleshooting/01-kali-network-profile.md) | Kali's first boot had no internet |
 | [TSH-02](troubleshooting/02-esxi-ssh-fips-keys.md) | ESXi rejected my SSH key and still accepted passwords |
 | [TSH-03](troubleshooting/03-nested-esxi-vmkernel-mac.md) | Nested ESXi could not reach the NFS server |
@@ -131,7 +152,8 @@ $ scripts/lab.sh snapshot vsphere before-upgrade
 
 ```text
 docs/             network, unattended installs, security audit, naming, images
-scripts/          lab.sh (power profiles), export-vmx.py (shareable .vmx files)
+scripts/          lab.sh (power profiles), export-vmx.py (shareable .vmx files),
+                  check-links.py (run by the checks)
 troubleshooting/  one write-up per real problem
 vms/<vm>/         README, answer files and build scripts, <vm>.vmx.example
 ```

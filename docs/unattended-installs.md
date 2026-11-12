@@ -5,18 +5,20 @@ installed without typing anything: boot the VM from an ISO, wait, and it powers 
 when it is done. Windows only needs one key press to boot from its CD. Rebuilding a VM from
 zero takes 4 to 11 minutes.
 
+![The unattended install in four steps: build-iso.sh joins the vendor ISO, the answer file and the secrets; the VM installs itself and powers off; it is verified over SSH; and a baseline snapshot is taken](img/unattended-install.png)
+
 ## The pattern
 
 1. **Start from the vendor's ISO** and check it against the vendor's checksum.
 2. **Write the answers in the installer's own format**, kept in this repository:
 
-   | VM | Installer | Answer file |
-   |---|---|---|
-   | debian-13-server | debian-installer | [`preseed.cfg`](../vms/debian-13-server/preseed.cfg) |
-   | kali-linux | debian-installer + Kali's simple-cdd profile | [`preseed.cfg`](../vms/kali-linux/preseed.cfg) + [`finish.sh`](../vms/kali-linux/finish.sh) |
-   | rocky-10-server | Anaconda | [`ks.cfg`](../vms/rocky-10-server/ks.cfg) (kickstart) |
-   | esxi-8-host | ESXi weasel | [`ks.cfg`](../vms/esxi-8-host/ks.cfg) (ESXi kickstart) |
-   | windows-server-2025-core | Windows Setup | [`autounattend.xml`](../vms/windows-server-2025-core/autounattend.xml) + [`setup.ps1`](../vms/windows-server-2025-core/setup.ps1) |
+   | VM | Installer | Answer file | Install time | Typed by hand |
+   |---|---|---|---|---|
+   | debian-13-server | debian-installer | [`preseed.cfg`](../vms/debian-13-server/preseed.cfg) | about 4 min | nothing (its `lab` NIC was added afterwards) |
+   | kali-linux | debian-installer + Kali's simple-cdd profile | [`preseed.cfg`](../vms/kali-linux/preseed.cfg) + [`finish.sh`](../vms/kali-linux/finish.sh) | 11 min | nothing |
+   | rocky-10-server | Anaconda | [`ks.cfg`](../vms/rocky-10-server/ks.cfg) (kickstart) | about 4 min | nothing |
+   | esxi-8-host | ESXi weasel | [`ks.cfg`](../vms/esxi-8-host/ks.cfg) (ESXi kickstart) | about 4 min | nothing |
+   | windows-server-2025-core | Windows Setup | [`autounattend.xml`](../vms/windows-server-2025-core/autounattend.xml) + [`setup.ps1`](../vms/windows-server-2025-core/setup.ps1) | about 10 min | one key press to boot from the CD |
 
 3. **Keep secrets out of the repository.** Answer files carry placeholders such as
    `@@USER_PASSWORD_HASH@@` or `@@ADMIN_PASSWORD@@`. Each VM's `build-iso.sh` fills them

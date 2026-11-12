@@ -34,6 +34,8 @@ The name has no version because Kali is a rolling release.
    11 minutes; the VM powers itself off.
 4. Detach the ISO and take the `baseline` snapshot powered off.
 
+## What it took
+
 **The installer's network profile was broken.** Kali's installer writes its
 NetworkManager profile with the key `mac=`, which NetworkManager ignores (the real
 key is `mac-address=`). The profile ended up bound to no interface and the `nat`

@@ -16,6 +16,10 @@ sendto() failed (Host is down)
 
 The management port `vmk0` worked fine.
 
+![Nested ESXi on shared storage: inside VMware Workstation, esxi-8-host mounts its only datastore over NFS 4.1 from truenas-25.10-storage across the isolated lab network, and runs a test VM from it](../docs/img/nested-esxi-storage.png)
+
+The picture shows the path once it worked: `vmk1` to TrueNAS across `lab`.
+
 ## Cause
 
 `vmk0` takes the MAC address of its uplink, `vmnic0`, which is the MAC of the

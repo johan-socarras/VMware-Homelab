@@ -36,6 +36,9 @@ jobs:
       - name: Windows answer file is well-formed XML
         run: python3 -c 'import sys, xml.dom.minidom as m; m.parse(sys.argv[1])' vms/windows-server-2025-core/autounattend.xml
 
+      - name: Relative links and images resolve
+        run: python3 scripts/check-links.py
+
       - name: No password hash or key committed
         run: |
           if grep -rnIE '\$(1|5|6|y|2[aby])\$|PRIVATE KEY|(ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp[0-9]+) AAAA' \

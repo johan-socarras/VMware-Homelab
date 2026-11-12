@@ -30,6 +30,8 @@ a ZFS mirror exported over NFS, reachable only from the isolated `lab` network.
    the script is tied to 25.10; a later release would need the JSON-RPC 2.0 WebSocket API.
 4. Take the `baseline` snapshot powered off.
 
+## What it took
+
 **The network change rolls back by design.** TrueNAS applies interface changes with
 `interface/commit` and undoes them after 90 seconds unless `interface/checkin`
 arrives from the new address. In the REST API the check-in is a **GET** (a POST

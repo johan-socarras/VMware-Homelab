@@ -35,7 +35,9 @@ became the template for the others.
    take the `baseline` snapshot powered off. The `lab` NIC is a manual step here;
    the VMs built after this one configure both NICs during the install.
 
-## Changes after the baseline
+## What it took
+
+Two changes after the `baseline` snapshot:
 
 - `nfs-common`, installed to test the NFS share of
   [truenas-25.10-storage](../truenas-25.10-storage/README.md).
