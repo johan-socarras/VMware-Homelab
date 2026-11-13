@@ -61,10 +61,10 @@ lo               UNKNOWN        127.0.0.1/8 ::1/128
 ens160           UP             10.10.8.12/24 fe80::20c:29ff:fef9:a84c/64
 ens192           UP             10.10.10.12/24
 Enforcing
-```
 
-```bash
-ssh johan@10.10.8.12 'sudo firewall-cmd --list-services'    # ssh
+$ ssh -t johan@10.10.8.12 sudo firewall-cmd --list-services
+[sudo] password for johan:
+ssh
 ```
 
 ## Files
