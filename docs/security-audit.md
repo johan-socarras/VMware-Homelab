@@ -54,7 +54,32 @@ of the install script, and a fresh install confirmed they work.
 
 ## Reproduce
 
-```bash
-# start the targets and Kali, then from the host:
-ssh johan@10.10.8.14 'nmap -Pn -n -sV --top-ports 1000 10.10.10.11 10.10.10.12 10.10.10.16'
+Start the targets and Kali, then from the host:
+
+```text
+$ ssh johan@10.10.8.14 'nmap -Pn -n -sV --top-ports 1000 10.10.10.11 10.10.10.12 10.10.10.16'
+Nmap scan report for 10.10.10.11
+Host is up (0.00015s latency).
+Not shown: 999 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 10.0p2 Debian 7+deb13u4 (protocol 2.0)
+MAC Address: 00:0C:29:3B:62:13 (VMware)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap scan report for 10.10.10.12
+Host is up (0.00035s latency).
+Not shown: 988 filtered tcp ports (no-response), 11 filtered tcp ports (admin-prohibited)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 9.9 (protocol 2.0)
+MAC Address: 00:0C:29:F9:A8:56 (VMware)
+
+Nmap scan report for 10.10.10.16
+Host is up (0.00025s latency).
+Not shown: 999 filtered tcp ports (no-response)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH for_Windows_9.5 (protocol 2.0)
+MAC Address: 00:50:56:10:10:16 (VMware)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 3 IP addresses (3 hosts up) scanned in 6.30 seconds
 ```

@@ -80,8 +80,12 @@ The Microsoft ISO is used as downloaded; a second, small CD carries everything e
 
 ```bash
 vmrun start ~/vmware/windows-server-2025-core/windows-server-2025-core.vmx nogui
-ssh Administrator@10.10.8.16 "(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').InstallationType; (Get-Service WinRM).StartType"
-# Server Core, Disabled
+```
+
+```text
+$ ssh Administrator@10.10.8.16 "(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').InstallationType; (Get-Service WinRM).StartType"
+Server Core
+Disabled
 ```
 
 ## Files

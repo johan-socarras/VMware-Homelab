@@ -52,9 +52,18 @@ Two changes after the `baseline` snapshot:
 
 ```bash
 vmrun start ~/vmware/debian-13-server/debian-13-server.vmx nogui
-ssh johan@10.10.8.11 'ip -br addr; mokutil --sb-state; systemctl is-enabled rpcbind.socket'
-# ens160 10.10.8.11/24, ens224 10.10.10.11/24, "SecureBoot enabled", "masked"
-ssh -o PubkeyAuthentication=no johan@10.10.8.11    # Permission denied (publickey)
+```
+
+```text
+$ ssh johan@10.10.8.11 'ip -br addr; mokutil --sb-state; systemctl is-enabled rpcbind.socket'
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+ens160           UP             10.10.8.11/24 fe80::20c:29ff:fe3b:6209/64
+ens224           UP             10.10.10.11/24 fe80::20c:29ff:fe3b:6213/64
+SecureBoot enabled
+masked
+
+$ ssh -o PubkeyAuthentication=no johan@10.10.8.11
+johan@10.10.8.11: Permission denied (publickey).
 ```
 
 ## Files

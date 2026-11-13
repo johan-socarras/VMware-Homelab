@@ -52,9 +52,27 @@ from [`kali-linux.vmx.example`](kali-linux.vmx.example), had `nat` on `eth0`, `l
 
 ```bash
 vmrun start ~/vmware/kali-linux/kali-linux.vmx nogui
-ssh johan@10.10.8.14 'ip -br a; nmcli -f NAME,DEVICE con show'
-# eth0 10.10.8.14/24, eth1 10.10.10.14/24, profiles nat and lab
-ssh johan@10.10.8.14 nmap -n 10.10.10.11      # with Debian running: 22/tcp open
+```
+
+```text
+$ ssh johan@10.10.8.14 'ip -br a; nmcli -f NAME,DEVICE con show'
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+eth0             UP             10.10.8.14/24
+eth1             UP             10.10.10.14/24
+NAME  DEVICE
+nat   eth0
+lab   eth1
+lo    lo
+
+$ ssh johan@10.10.8.14 nmap -n 10.10.10.11      # with Debian running
+Nmap scan report for 10.10.10.11
+Host is up (0.000031s latency).
+Not shown: 999 closed tcp ports (reset)
+PORT   STATE SERVICE
+22/tcp open  ssh
+MAC Address: 00:0C:29:3B:62:13 (VMware)
+
+Nmap done: 1 IP address (1 host up) scanned in 0.10 seconds
 ```
 
 ## Files

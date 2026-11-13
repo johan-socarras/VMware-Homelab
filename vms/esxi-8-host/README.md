@@ -75,11 +75,27 @@ on the host's `/dev/vmnet*` devices, which this lab does not change.
 
 ```bash
 vmrun start ~/vmware/esxi-8-host/esxi-8-host.vmx nogui     # with TrueNAS already running
-ssh root@10.10.1.15 'vmware -v; esxcli storage nfs41 list; vmkping -I vmk1 -c1 10.10.10.13'
-# VMware ESXi 8.0.3 build-24677879, truenas-vmstore mounted and accessible, reply from 10.10.10.13
+```
+
+```text
+$ ssh root@10.10.1.15 'vmware -v; esxcli storage nfs41 list; vmkping -I vmk1 -c1 10.10.10.13'
+VMware ESXi 8.0.3 build-24677879
+Volume Name      Host(s)      Share              Vmknics  Accessible  Mounted  Connections  Read-Only  Security   isPE  Hardware Acceleration
+---------------  -----------  -----------------  -------  ----------  -------  -----------  ---------  --------  -----  ---------------------
+truenas-vmstore  10.10.10.13  /mnt/tank/vmstore  None           true     true            1      false  AUTH_SYS  false  Not Supported
+PING 10.10.10.13 (10.10.10.13): 56 data bytes
+64 bytes from 10.10.10.13: icmp_seq=0 ttl=64 time=0.390 ms
+
+--- 10.10.10.13 ping statistics ---
+1 packets transmitted, 1 packets received, 0% packet loss
+round-trip min/avg/max = 0.390/0.390/0.390 ms
 ```
 
 ![ESXi direct console after the unattended install](../../docs/img/esxi-dcui.png)
+
+![ESXi Host Client summary of esxi-8-host: version 8.0 Update 3, image profile ESXi-8.0U3e-24677879-standard](../../docs/img/esxi-host-client.png)
+
+![The truenas-vmstore datastore in the ESXi Host Client, type NFS41](../../docs/img/esxi-datastore.png)
 
 ## Files
 

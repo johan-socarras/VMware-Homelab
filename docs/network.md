@@ -94,7 +94,29 @@ sudo vmware-networks --start      # the migrate command stops the networks and d
 
 ## Verify
 
-```bash
-grep "^answer VNET_" /etc/vmware/networking   # subnets 10.10.1.0, 10.10.8.0, 10.10.10.0; VNET_10_DHCP no
-ip -br addr | grep vmnet                      # vmnet1 10.10.1.1/24, vmnet8 10.10.8.1/24
+```text
+$ grep "^answer VNET_" /etc/vmware/networking
+answer VNET_10_DHCP no
+answer VNET_10_HOSTONLY_NETMASK 255.255.255.0
+answer VNET_10_HOSTONLY_SUBNET 10.10.10.0
+answer VNET_10_VIRTUAL_ADAPTER no
+answer VNET_1_DHCP yes
+answer VNET_1_DHCP_CFG_HASH 048C4867C3EB726EF5174C01B92D733075869642
+answer VNET_1_HOSTONLY_NETMASK 255.255.255.0
+answer VNET_1_HOSTONLY_SUBNET 10.10.1.0
+answer VNET_1_VIRTUAL_ADAPTER yes
+answer VNET_8_DHCP yes
+answer VNET_8_DHCP_CFG_HASH D5019DF7D234917F37C0897F739F2B08263F722C
+answer VNET_8_HOSTONLY_NETMASK 255.255.255.0
+answer VNET_8_HOSTONLY_SUBNET 10.10.8.0
+answer VNET_8_NAT yes
+answer VNET_8_VIRTUAL_ADAPTER yes
+
+$ ip -br addr | grep vmnet
+vmnet1           UNKNOWN        10.10.1.1/24 fe80::250:56ff:fec0:1/64
+vmnet8           UNKNOWN        10.10.8.1/24 fe80::250:56ff:fec0:8/64
 ```
+
+The same four networks in the Virtual Network Editor of VMware Workstation:
+
+![Virtual Network Editor: vmnet0 bridged, vmnet1 host-only 10.10.1.0, vmnet8 NAT 10.10.8.0 and vmnet10 host-only 10.10.10.0 without DHCP](img/workstation-network-editor.png)

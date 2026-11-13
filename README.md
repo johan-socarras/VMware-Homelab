@@ -107,6 +107,27 @@ $ scripts/lab.sh stop servers
 $ scripts/lab.sh snapshot vsphere before-upgrade
 ```
 
+With the `security` profile running:
+
+```text
+$ scripts/lab.sh status
+debian-13-server           running
+esxi-8-host                off
+eve-ng-ce-6.2              off
+kali-linux                 running
+omarchy-4.0-desktop        off
+rocky-10-server            running
+truenas-25.10-storage      off
+ubuntu-26.04-desktop       off
+windows-server-2025-core   running
+
+$ scripts/lab.sh stop security
+kali-linux: shutting down
+windows-server-2025-core: shutting down
+rocky-10-server: shutting down
+debian-13-server: shutting down
+```
+
 ## Rebuild a VM
 
 Each VM is built from the vendor's ISO and the files in its folder. Debian, for example:
@@ -129,9 +150,27 @@ The page of each VM has its own steps.
 
 ## Screenshots
 
+![VMware Workstation with the lab's VMs in its library](docs/img/workstation-library.png)
+
+The library in VMware Workstation, with the `vsphere` profile running. The two desktop
+VMs, `omarchy-4.0-desktop` and `ubuntu-26.04-desktop`, are outside the scope of this
+repository.
+
 ![ESXi direct console after the unattended install](docs/img/esxi-dcui.png)
 
 The nested ESXi host after its kickstart install, at the address the kickstart gave it.
+
+![ESXi Host Client summary of esxi-8-host: version 8.0 Update 3, image profile ESXi-8.0U3e-24677879-standard](docs/img/esxi-host-client.png)
+
+The same host in the ESXi Host Client.
+
+![The truenas-vmstore datastore in the ESXi Host Client, type NFS41](docs/img/esxi-datastore.png)
+
+Its datastore, `truenas-vmstore`, mounted from TrueNAS over NFS 4.1.
+
+![TrueNAS storage dashboard: pool tank, one mirror VDEV two disks wide, online with no errors](docs/img/truenas-pool.png)
+
+The pool behind that datastore in TrueNAS: `tank`, a two-disk mirror.
 
 ## Documentation
 

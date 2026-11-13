@@ -55,6 +55,10 @@ vmrun start ~/vmware/truenas-25.10-storage/truenas-25.10-storage.vmx nogui
 curl -sk -u truenas_admin https://10.10.8.13/api/v2.0/pool    # tank, ONLINE, MIRROR
 ```
 
+![TrueNAS storage dashboard: pool tank, one mirror VDEV two disks wide, online with no errors](../../docs/img/truenas-pool.png)
+
+![The NFS share /mnt/tank/vmstore in TrueNAS, limited to the network 10.10.10.0/24](../../docs/img/truenas-nfs-share.png)
+
 ## Files
 
 | File | What it is |

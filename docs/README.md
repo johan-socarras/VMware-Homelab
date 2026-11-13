@@ -7,6 +7,6 @@
 | [Security audit](security-audit.md) | Port scans from Kali, what they found and how it was closed |
 | [Naming](naming.md) | How VMs, hosts and snapshots are named, and why |
 
-The diagrams and the screenshot used across the repository are in [`img/`](img).
+The diagrams and the screenshots used across the repository are in [`img/`](img).
 Each VM has its own page under [`vms/`](../vms/README.md), and the problems met along
 the way are written up under [`troubleshooting/`](../troubleshooting/README.md).

@@ -53,8 +53,18 @@ router answered: the VMs on `lab` see each other and nothing else.
 
 ```bash
 vmrun start ~/vmware/rocky-10-server/rocky-10-server.vmx nogui
-ssh johan@10.10.8.12 'ip -br addr; getenforce; sudo firewall-cmd --list-services'
-# ens160 10.10.8.12/24, ens192 10.10.10.12/24, Enforcing, ssh
+```
+
+```text
+$ ssh johan@10.10.8.12 'ip -br addr; getenforce'
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+ens160           UP             10.10.8.12/24 fe80::20c:29ff:fef9:a84c/64
+ens192           UP             10.10.10.12/24
+Enforcing
+```
+
+```bash
+ssh johan@10.10.8.12 'sudo firewall-cmd --list-services'    # ssh
 ```
 
 ## Files
